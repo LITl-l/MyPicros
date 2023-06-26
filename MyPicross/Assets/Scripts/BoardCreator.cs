@@ -28,15 +28,15 @@ public class BoardCreator : MonoBehaviour
 		GridLayoutGroup gridLayout = this.gameObject.GetComponent<GridLayoutGroup>();
 		gridLayout.constraintCount = boardSize;
 
-		for (int i = 0; i < boardSize; i++)
+		for (int y = 0; y < boardSize; y++)
 		{
-			for (int j = 0; j < boardSize; j++)
+			for (int x = 0; x < boardSize; x++)
 			{
 				GameObject cellObj = Instantiate(cells, grid);
-				cellObj.name = "Cell" + i + j;
+				cellObj.name = "Cell" + x + y;
 				Cell cellScript = cellObj.GetComponent<Cell>();
-				cellScript.x = j;
-				cellScript.y = i;
+				cellScript.x = y;
+				cellScript.y = x;
 				cellList.Add(cellObj);
 			}
 		}

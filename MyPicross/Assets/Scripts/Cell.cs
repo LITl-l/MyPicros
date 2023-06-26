@@ -24,7 +24,7 @@ public class Cell : MonoBehaviour
 
 	public void OnPointerDown()
 	{
-		Debug.Log($"{this.name} is clicked");
+		Debug.Log($"Cell ({x}, {y}) is clicked");
 		PaintMode = !PaintMode;
 		ColorChange();
 	}

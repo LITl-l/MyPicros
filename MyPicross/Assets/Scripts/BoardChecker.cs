@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,8 @@ public class BoardChecker : MonoBehaviour
 	bool[,] cellStatuses;
 	public string problemAddress;
 	private Texture2D _problem;
-	bool[,] answer;
+	private bool[,] _answer;
+	public bool[,] answer { get { return _answer; } }
 
 	// Start is called before the first frame update
 	void Start()
@@ -32,18 +34,21 @@ public class BoardChecker : MonoBehaviour
 		sizeY = _problem.height;
 		// Debug.Log($"X:{sizeX} Y:{sizeY}");
 
-		answer = new bool[sizeX, sizeY];
-		printArray<bool>(answer);
+		_answer = new bool[sizeX, sizeY];
 		cellStatuses = new bool[sizeX, sizeY];
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
 				Color color = colors[y * sizeX + x];
+				// Color pixel = _problem.GetPixel(x, y);
 				bool isBlack = (color == Color.black);
-				answer[x, y] = isBlack;
+				_answer[x, y] = isBlack;
 			}
 		}
+		Rotate<bool>(_answer);
+		ReverseHorizontal<bool>(_answer);
+		printArray<bool>(_answer, nameof(answer));
 		Addressables.Release(_problem);
 	}
 
@@ -51,15 +56,65 @@ public class BoardChecker : MonoBehaviour
 	{
 		// Debug.Log($"OnCellChanged:{x}:{y},{isPainted}");
 		cellStatuses[x, y] = isPainted;
-		printArray<bool>(cellStatuses);
+		printArray<bool>(cellStatuses, nameof(cellStatuses));
 
-		if (cellStatuses == answer)
+		if (CheckAnswer(cellStatuses, _answer))
 			Debug.Log("clear");
 	}
 
-	private void printArray<T>(T[,] array)
+	private bool CheckAnswer(bool[,] cells, bool[,] answer)
 	{
-		string output = array.ToString() + ":\n";
+		int width = cells.GetLength(0);
+		int height = cells.GetLength(1);
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				if (cells[x, y] != answer[x, y])
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void Rotate<T>(T[,] array)
+	{
+		int width = array.GetLength(0);
+		int height = array.GetLength(1);
+
+		T[,] copy = (T[,])array.Clone();
+
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				array[x, y] = copy[height - 1 - y, x];
+			}
+		}
+	}
+
+	private void ReverseHorizontal<T>(T[,] array)
+	{
+		int width = array.GetLength(0);
+		int height = array.GetLength(1);
+
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width / 2; x++)
+			{
+				T temp = array[x, y];
+				array[x, y] = array[width - 1 - x, y];
+				array[width - 1 - x, y] = temp;
+			}
+		}
+	}
+
+	private void printArray<T>(T[,] array, string name = "")
+	{
+		string output = name + ":\n";
 		int rows = array.GetLength(0);
 		int columns = array.GetLength(1);
 
