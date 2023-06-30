@@ -19,7 +19,7 @@ public class BoardChecker : MonoBehaviour
 	public bool[,] answer { get { return _answer; } }
 
 	// Start is called before the first frame update
-	void Start()
+	void Awake()
 	{
 		_creator = this.GetComponent<BoardCreator>();
 		LoadProblem();
