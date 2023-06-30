@@ -963,6 +963,7 @@ GameObject:
   - component: {fileID: 1313042810}
   - component: {fileID: 1313042812}
   - component: {fileID: 1313042811}
+  - component: {fileID: 1313042813}
   m_Layer: 5
   m_Name: BoardBackGround
   m_TagString: Untagged
@@ -1030,6 +1031,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1313042809}
   m_CullTransparentMesh: 1
+--- !u!114 &1313042813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313042809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f2abc084762365458787ed798d4dd0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  board: {fileID: 1199266596}
+  _root: {fileID: 1313042810}
+  _vertical: {fileID: 583064347}
+  _horizontal: {fileID: 562618554}
 --- !u!1 &1633861193
 GameObject:
   m_ObjectHideFlags: 0
