@@ -25,7 +25,7 @@ public class BoardCreator : MonoBehaviour
 		handle = Addressables.LoadAssetAsync<GameObject>(reference);
 		await handle.Task;
 		GameObject cells = handle.Result;
-		GridLayoutGroup gridLayout = this.gameObject.GetComponent<GridLayoutGroup>();
+		GridLayoutGroup gridLayout = gameObject.GetComponent<GridLayoutGroup>();
 		gridLayout.constraintCount = boardSize;
 
 		for (int y = 0; y < boardSize; y++)
@@ -35,8 +35,7 @@ public class BoardCreator : MonoBehaviour
 				GameObject cellObj = Instantiate(cells, grid);
 				cellObj.name = "Cell" + x + y;
 				Cell cellScript = cellObj.GetComponent<Cell>();
-				cellScript.x = y;
-				cellScript.y = x;
+				cellScript.GetCoord = (y, x);
 				cellList.Add(cellObj);
 			}
 		}

@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\MyPicross",
+    "\\MyPicross\\Assets",
+    "\\MyPicross\\Assets\\Scripts"
   ],
-  "SelectedNode": "\\MyPicross.sln",
+  "SelectedNode": "\\MyPicross\\Assets\\Scripts\\Util.cs",
   "PreviewInSolutionExplorer": false
 }

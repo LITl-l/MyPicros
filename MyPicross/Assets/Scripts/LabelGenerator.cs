@@ -1,8 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
 
 public class LabelGenerator : MonoBehaviour
 {
@@ -12,81 +14,75 @@ public class LabelGenerator : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI _horizontal;
 
 	private BoardCreator _creator;
-	private BoardChecker _checker;
+	private ProblemLoader _loader;
 	private int _verticalNum = 0;
 	private int _horizontalNum = 0;
 	private bool[,] _answer;
 	// Start is called before the first frame update
-	void Start()
+	async void Start()
 	{
+		CancellationToken ct = destroyCancellationToken;
 		_creator = board.GetComponent<BoardCreator>();
-		_checker = board.GetComponent<BoardChecker>();
+		_loader = board.GetComponent<ProblemLoader>();
 		_verticalNum = _creator.boardSize;
 		_horizontalNum = _creator.boardSize;
-		CloneLabels();
+		// Debug.Log($"h: {_horizontalNum}, v: {_verticalNum}");
+		await CloneLabels(ct);
 	}
 
-	private void CloneLabels()
+	private async UniTask CloneLabels(CancellationToken token)
 	{
-		_answer = _checker.answer;
-		printArray<bool>(_answer);
-		for (int y = 0; y < _verticalNum - 1; y++)
+		_answer = await _loader.LoadProblem(token);
+		Util.printArray(_answer, "in label");
+
+		GenerateLabels(_vertical, true);
+		GenerateLabels(_horizontal, false);
+	}
+
+	private void GenerateLabels(TextMeshProUGUI label, bool isVertical)
+	{
+		int num = isVertical ? _verticalNum : _horizontalNum;
+		TextMeshProUGUI origin = isVertical ? _vertical : _horizontal;
+
+		List<string> labelTexts = new List<string>();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < num; i++)
 		{
-			var newLabel = GameObject.Instantiate<TextMeshProUGUI>(_vertical, _root, true);
-			newLabel.rectTransform.anchoredPosition = new Vector3(_vertical.rectTransform.anchoredPosition.x, -50 - 30 * y - 2 * y);
-			string labelText = "";
 			int count = 0;
-			for (int x = 0; x < _horizontalNum - 1; x++)
+			int maxNum = isVertical ? _horizontalNum : _verticalNum;
+			sb.Length = 0;
+			for (int j = 0; j < maxNum; j++)
 			{
-				bool state = _answer[x, y];
+				bool state = isVertical ? _answer[i, j] : _answer[j, i];
 				if (state)
 					count++;
 				else
 				{
-					labelText += $"{count}";
+					if (count > 0)
+					{
+						sb.Append(count);
+						if (isVertical)
+							sb.Append("  ");
+						else sb.Append("\n");
+					}
 					count = 0;
 				}
 			}
-			newLabel.text = labelText;
+			if (sb.Length == 0) sb.Append("0");
+			labelTexts.Add(sb.ToString());
 		}
-		for (int x = 0; x < _horizontalNum - 1; x++)
+
+		if (isVertical)
+			_vertical.text = labelTexts[0];
+		else _horizontal.text = labelTexts[0];
+
+		for (int i = 1; i < num; i++)
 		{
-			var newLabel = GameObject.Instantiate<TextMeshProUGUI>(_horizontal, _root, true);
-			newLabel.rectTransform.anchoredPosition = new Vector3(40 + 30 * x + 2 * x, _horizontal.rectTransform.anchoredPosition.y);
-			string labelText = "";
-			int count = 0;
-			for (int y = 0; y < _verticalNum - 1;)
-			{
-				bool state = _answer[x, y];
-				if (state)
-					count++;
-				else
-				{
-					labelText += $"{count}";
-					count = 0;
-				}
-			}
-			newLabel.text = labelText;
+			var newLabel = Instantiate(label, _root, true);
+			float positonX = isVertical ? origin.rectTransform.anchoredPosition.x : 10 + 25 * i + 5 * i;
+			float positonY = isVertical ? -20 - 25 * i - 5 * i : origin.rectTransform.anchoredPosition.y;
+			newLabel.rectTransform.anchoredPosition = new Vector2(positonX, positonY);
+			newLabel.text = labelTexts[i];
 		}
-	}
-
-	private void printArray<T>(T[,] array, string name = "")
-	{
-		string output = name + ":\n";
-		int rows = array.GetLength(0);
-		int columns = array.GetLength(1);
-
-		for (int i = 0; i < rows; i++)
-		{
-			for (int j = 0; j < columns; j++)
-			{
-				output += array[i, j] + "\t"; // タブ区切りで表示する場合
-																			// output += array[i, j] + " "; // スペース区切りで表示する場合
-			}
-
-			output += "\n"; // 改行
-		}
-
-		Debug.Log(output);
 	}
 }
