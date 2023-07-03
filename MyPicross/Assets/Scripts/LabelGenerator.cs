@@ -48,8 +48,8 @@ public class LabelGenerator : MonoBehaviour {
       sb.Length = 0;
       for (int j = 0; j < maxNum; j++) {
         bool state = isVertical ? _answer[i, j] : _answer[j, i];
-        if (!isVertical)
-          Debug.Log($"i: {i}, j: {j}, state: {state}");
+        // if (!isVertical)
+        //   Debug.Log($"i: {i}, j: {j}, state: {state}");
         if (state)
           count++;
         else {
