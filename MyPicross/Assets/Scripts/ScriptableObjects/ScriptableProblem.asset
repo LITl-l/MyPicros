@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85505e4c4a25f624b87815c1fed45c14, type: 3}
-  m_Name: A
+  m_Name: ScriptableProblem
   m_EditorClassIdentifier: 

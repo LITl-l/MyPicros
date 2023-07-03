@@ -10,7 +10,7 @@ public class ProblemLoader : MonoBehaviour
   public int BoardSizeX => sizeX;
   private int sizeY;
   public int BoardSizeY => sizeY;
-  public string problemAddress;
+  private string problemAddress;
   private Texture2D _problem;
   private bool[,] _answer;
   public bool[,] Answer => _answer;
